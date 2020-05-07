@@ -38,7 +38,7 @@ exports.getEditProduct = (req, res, next) => {
             res.render('admin/edit-product', {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
-                product: product
+                product: product,
             });
         })
         .catch(err => console.log(err));
@@ -81,7 +81,7 @@ exports.getProducts = (req, res, next) => {
             res.render('admin/products', {
                 pageTitle: 'Admin Products', 
                 path: '/admin/products',
-                prods: product
+                prods: product,
             });
         })
         .catch(err => console.log(err));
