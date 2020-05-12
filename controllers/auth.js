@@ -5,10 +5,11 @@ const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
+const CONST = require('../util/const');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
-        api_key: 'APIKey'
+        api_key: CONST.MONGODB_URI
     }
 }));
 
