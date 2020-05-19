@@ -1,10 +1,14 @@
 const Product = require('../models/product');
+const { validationResult } = require('express-validator/check');
 
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
-        product: null
+        product: null,
+        editing: false,
+        errorMessage: '',
+        validationError: []
     });
 };
 
@@ -20,6 +24,19 @@ exports.postAddProduct = (req, res, next) => {
         imageUrl: imageUrl,
         userId: req.user
     });
+
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+        return res.status(422).render('admin/edit-product', {
+            pageTitle: 'Add Product',
+            path: '/admin/add-product',
+            product: product,
+            editing: false,
+            errorMessage: error.array()[0].msg,
+            validationError: error.array()
+        });
+    }
+
     product.save()    
         .then(result => {
             console.log('Product is created');
@@ -39,6 +56,9 @@ exports.getEditProduct = (req, res, next) => {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
                 product: product,
+                editing: true,
+                errorMessage: '',
+                validationError: []
             });
         })
         .catch(err => console.log(err));
@@ -51,6 +71,25 @@ exports.postEditProduct = (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
     
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+        return res.status(422).render('admin/edit-product', {
+            params: prodId,
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            product: {
+                title: title,
+                imageUrl: imageUrl,
+                price: price,
+                description: description,
+                _id: prodId
+            },
+            editing: true,
+            errorMessage: error.array()[0].msg,
+            validationError: error.array()
+        });
+    }
+
     Product.findById(prodId).then(product => {
         if (product.userId.toString() !== req.user._id.toString()) {
             return res.redirect('/admin/products');
