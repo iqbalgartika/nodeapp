@@ -7,6 +7,7 @@ const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
 const CONST = require('../util/const');
+const errorHandler = require('./error').handler;
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
@@ -79,7 +80,7 @@ exports.postLogin = (req, res, next) => {
                     return res.redirect('/login');
                 });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.postLogout = (req, res, next) => {
@@ -146,7 +147,7 @@ exports.postSignup = (req, res, next) => {
                 html: '<h1>You successfully signed up on shop@nodeapp!</h1>'
             })
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.getReset = (req, res, next) => {
@@ -193,7 +194,7 @@ exports.postReset = (req, res, next) => {
                     `
                 })
             })
-            .catch(err => console.log(err));
+            .catch(err => errorHandler(err, next));
     });
 };
 
@@ -216,7 +217,7 @@ exports.getNewPassword = (req, res, next) => {
                 passwordToken: token
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.postNewPassword = (req, res, next) => {
@@ -237,5 +238,5 @@ exports.postNewPassword = (req, res, next) => {
             return resetUser.save();
         })
         .then(() => res.redirect('/login'))
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };

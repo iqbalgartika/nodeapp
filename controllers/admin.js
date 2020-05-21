@@ -1,5 +1,8 @@
-const Product = require('../models/product');
 const { validationResult } = require('express-validator/check');
+const mongoose = require('mongoose');
+
+const Product = require('../models/product');
+const errorHandler = require('./error').handler;
 
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', {
@@ -42,7 +45,7 @@ exports.postAddProduct = (req, res, next) => {
             console.log('Product is created');
             res.redirect('/admin/products');
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -61,7 +64,7 @@ exports.getEditProduct = (req, res, next) => {
                 validationError: []
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -103,7 +106,7 @@ exports.postEditProduct = (req, res, next) => {
             res.redirect('/admin/products');
         })
     })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -113,7 +116,7 @@ exports.postDeleteProduct = (req, res, next) => {
             console.log('Destroyed product');
             res.redirect('/admin/products');
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 }
 
 exports.getProducts = (req, res, next) => {
@@ -125,5 +128,5 @@ exports.getProducts = (req, res, next) => {
                 prods: product,
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };

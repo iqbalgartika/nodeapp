@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
+const errorHandler = require('./error').handler;
 
 exports.getIndex = (req, res, next) => {
     Product.find()
@@ -10,7 +11,7 @@ exports.getIndex = (req, res, next) => {
                 prods: products
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.getProducts = (req, res, next) => {
@@ -22,7 +23,7 @@ exports.getProducts = (req, res, next) => {
                 prods: products
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.getProduct = (req, res, next) => {
@@ -35,7 +36,7 @@ exports.getProduct = (req, res, next) => {
                 product: product
             });
         })
-        .catch(err => console.log(err));;
+        .catch(err => errorHandler(err, next));;
 };
 
 exports.getCart = (req, res, next) => {
@@ -50,7 +51,7 @@ exports.getCart = (req, res, next) => {
                 products: products
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.postCart = (req, res, next) => {
@@ -60,14 +61,14 @@ exports.postCart = (req, res, next) => {
             return req.user.addToCart(product);
         })
         .then(() => res.redirect('/cart'))
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
     req.user.deleteCartItem(prodId)
         .then(() => res.redirect('/cart'))
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 }
 
 exports.getOrders = (req, res, next) => {
@@ -79,7 +80,7 @@ exports.getOrders = (req, res, next) => {
             orders: orders
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => errorHandler(err, next));
 };
 
 exports.postOrder = (req, res, next) => {
@@ -101,6 +102,6 @@ exports.postOrder = (req, res, next) => {
         })
         .then(() => req.user.clearCart())
         .then(() => res.redirect('/orders'))
-        .catch(err => console.log(err));
+        .catch(err => errorHandler(err, next));
 };
 
