@@ -6,6 +6,7 @@ const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
+router.get('/products', isAuth, adminController.getProducts);
 router.get('/add-product', isAuth, adminController.getAddProduct);
 router.post('/add-product', 
     [
@@ -32,7 +33,6 @@ router.post('/edit-product',
             .trim()
     ],
     isAuth, adminController.postEditProduct);
-router.post('/delete-product', isAuth, adminController.postDeleteProduct);
-router.get('/products', isAuth, adminController.getProducts);
+router.delete('/product/:productId', isAuth, adminController.deleteProduct);
 
 module.exports = router;
