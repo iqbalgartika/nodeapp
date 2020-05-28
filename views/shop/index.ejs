@@ -7,6 +7,7 @@
 
     <main>
         <% if (prods.length > 0) { %>
+            <%- include('../includes/pagination.ejs'), {currentPage: currentPage, prevPage: prevPage, nextPage: nextPage, lastPage: lastPage} %>
             <div class="grid">
                 <% for (let product of prods) { %>
                     <article class="card product-item">
