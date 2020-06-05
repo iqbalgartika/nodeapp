@@ -47,3 +47,5 @@ Thumbs.db
 
 # util/const.js
 /images
+server.cert
+server.key

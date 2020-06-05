@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const CONST = require('../util/const');
-const stripe = require("stripe")(CONST.STRIPE_APIKEY);
+const stripe = require("stripe")(process.env.STRIPE_APIKEY);
 
 const PDFDocument = require('pdfkit');
 

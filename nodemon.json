@@ -1,0 +1,8 @@
+{
+    "env": {
+        "MONGODB_URI": "MONGODB_URI",
+        "MAILER_APIKEY": "MAILER_APIKEY",
+        "STRIPE_APIKEY": "STRIPE_APIKEY"
+    }
+}
+

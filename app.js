@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs');
+// const https = require('https');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,24 +10,28 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
-const CONST = require('./util/const');
 
-// config const
+//----------------------- config const ---------------------
 const app = express();
 const store = new MongoDBStore({
-    uri: CONST.MONGODB_URI,
+    uri: process.env.MONGODB_URI,
     collection: 'sessions'
 });
 const csrfProtection = csrf();
+// const privateKey = fs.readFileSync('server.key');
+// const certificate = fs.readFileSync('server.cert');
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'images');
     },
     filename: (req, file, cb) => {
-        cb(null, new Date().valueOf() + '_' + file.originalname );
+        cb(null, new Date().valueOf() + '_' + file.originalname);
     }
 });
 const fileFilter = (req, file, cb) => {
@@ -43,11 +49,21 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'),
+    { flags: 'a' } //append
+);
+//--------------------------------------------
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }));
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use(session({secret: 'MySecretKey', resave: false, saveUninitialized: false, store: store}));
+app.use(session({ secret: 'MySecretKey', resave: false, saveUninitialized: false, store: store }));
 app.use(csrfProtection);
 app.use(flash());
 
@@ -85,13 +101,15 @@ app.use((error, req, res, next) => {
     res.status(500).render('500', {
         pageTitle: 'Error',
         path: '/500',
-        isAuthenticated : req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
     });
 })
 
-mongoose.connect(CONST.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
     .then(res => {
-        app.listen(3000);
+        // https.createServer({key: privateKey, cert: certificate}, app)
+        //     .listen(process.env.PORT || 3000);
+        app.listen(process.env.PORT || 3000);
     })
     .catch(err => {
         console.log(err);
